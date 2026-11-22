@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Nature {
+  DEBIT
+  CREDIT
+}
+
+model Account {
+  code      String    @id
+  name      String
+  nature    Nature
+  parentCode String?
+  parent    Account?  @relation("Hierarchy", fields: [parentCode], references: [code], onDelete: Restrict, onUpdate: Restrict)
+  children  Account[] @relation("Hierarchy")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([parentCode])
+}
